@@ -1,25 +1,27 @@
 # LearnTalk
-Мой первый проект на Python. Обучаемый чат-бот с GUI на Tkinter. 
-Создавался во время изучения базы пайтона и библиотек.
+My first Python project. A trainable chatbot with a Tkinter GUI.
+Created while learning the basics of Python and its libraries.
 
-## Что умеет
-- Обучается новым ответам
-- Сохраняет память в JSON
-- GUI на Tkinter
-- Получает случайные факты из интернета
+## Features
+- Learns new responses
+- Saves memory to a JSON file
+- Tkinter GUI
+- Fetches random facts from the web
 
-## Запуск
-Установить нужные библиотеки:
-
+## Getting Started
+Install the required dependencies:
+```bash
 pip install -r requirements.txt
+```
 
-Запустить:
-
+Run the application:
+```bash
 python LearnTalk.py
+```
 
-## Команды
-- выход - выйти из приложения;
-- команды - вывести список команд;
-- факт - случайный факт из интернета; 
-- калькулятор - просто открывает калькулятор; 
-- время - выводит текущее время.
+## Commands
+- `exit` — close the application
+- `commands` — display the list of commands
+- `fact` — fetch a random fact from the internet
+- `calculator` — open the calculator
+- `time` — display the current time
