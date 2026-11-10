@@ -8,7 +8,6 @@ import requests
 import threading
 import subprocess
 import tkinter as tk
-from bs4 import BeautifulSoup
 from datetime import datetime
 from tkinter import messagebox
 from tkinter import scrolledtext
@@ -19,12 +18,12 @@ command_queue = queue.Queue()
 
 def load_data():
 	if os.path.exists(FILE):
-		with open(FILE, "r", encoding="utf-8") as ReadedFile:
-			data = json.load(ReadedFile)
+		with open(FILE, "r", encoding="utf-8") as read_file:
+			data = json.load(read_file)
 			return data
 	else:
-		default_memory = {"привет": "привет!"}
-		messagebox.showinfo("Система памяти", F"Файл {FILE} не найден! Создана пустая база данных.")
+		default_memory = {"hello": "hello!"}
+		messagebox.showinfo("Memory System", f"File {FILE} not found! Created a new database.")
 		with open(FILE, "w", encoding="utf-8") as file:
 			json.dump(default_memory, file, ensure_ascii=False, indent=4)
 			return default_memory
@@ -32,72 +31,63 @@ def load_data():
 
 def save_data(data):
 	if os.path.exists(FILE):
-		with open(FILE, "w", encoding="utf-8") as ReWritedFile:
-			json.dump(data, ReWritedFile, ensure_ascii=False, indent=4)
+		with open(FILE, "w", encoding="utf-8") as rewritten_file:
+			json.dump(data, rewritten_file, ensure_ascii=False, indent=4)
 	else:
-
-		messagebox.showwarning("Система памяти", f"Файл {FILE} не найден! Создана пустая база данных.")
+		messagebox.showwarning("Memory System", f"File {FILE} not found! Created a new database.")
 
 current_memory = load_data()
 
 window = tk.Tk()
-window.title("Уебок AI")
+window.title("LearnTalk AI")
 window.geometry("800x624")
 window.config(bg="#2c3e50")
 
 def bot_thinking(clean_command):
 	global last_question
 	chat_history.config(state=tk.NORMAL)
-	chat_history.insert(tk.END, f"Вы: {clean_command}\n")
+	chat_history.insert(tk.END, f"You: {clean_command}\n")
 
 	if last_question == "":
-		if clean_command == "выход":
-			chat_history.insert(tk.END, "Бот: Выхожу...\n\n")
+		if clean_command == "exit":
+			chat_history.insert(tk.END, "Bot: Exiting...\n\n")
 			window.destroy()
 			sys.exit()
 
-		elif clean_command == "команды":
-			chat_history.insert(tk.END, f"Бот: выход, команды, факт, калькулятор, время\n\n")
+		elif clean_command == "commands":
+			chat_history.insert(tk.END, "Bot: exit, commands, fact, calculator, time\n\n")
 
-		elif clean_command == "факт":
-		    url = "https://randstuff.ru/fact/"
-		    response = requests.get(url)
-		    if response.status_code == 200:
-		        soup = BeautifulSoup(response.text,"html.parser")
-		        fact_block = soup.find("div",id="fact")
-		        if fact_block:
-		            fact_td = fact_block.find("td")
-		            if fact_td:
-		                fact_text = (fact_td.text.strip())
-		                chat_history.insert(tk.END, f"Бот: {fact_text}\n\n")
-		            else:
-		                chat_history.insert(tk.END, "Бот: Не удалось найти текст факта\n\n")
-		        else:
-		            chat_history.insert(tk.END,"Бот: Блок факта не найден\n\n")
-		    else:
-		        chat_history.insert(tk.END,f"Бот: Ошибка сайта ({response.status_code})\n\n")
+		elif clean_command == "fact":
+			url = "https://jsph.pl"
+			response = requests.get(url)
+			if response.status_code == 200:
+				fact_data = response.json()
+				fact_text = fact_data.get("text", "Could not retrieve fact text.")
+				chat_history.insert(tk.END, f"Bot: {fact_text}\n\n")
+			else:
+				chat_history.insert(tk.END, f"Bot: Website error ({response.status_code})\n\n")
 
-		elif clean_command == "калькулятор":
-			chat_history.insert(tk.END, "Бот: Запускаю калькулятор...\n\n")
+		elif clean_command == "calculator":
+			chat_history.insert(tk.END, "Bot: Opening calculator...\n\n")
 			subprocess.Popen("calc.exe")
 
-		elif clean_command == "время":
-			FiltredTime = datetime.now().strftime("%H:%M")
-			chat_history.insert(tk.END, f"Бот: Сейчас {FiltredTime}\n\n")
+		elif clean_command == "time":
+			filtered_time = datetime.now().strftime("%H:%M")
+			chat_history.insert(tk.END, f"Bot: Current time is {filtered_time}\n\n")
 
 		elif clean_command in current_memory:
 			time.sleep(0.2)
-			chat_history.insert(tk.END, f"Бот: {current_memory[clean_command]}\n\n")
+			chat_history.insert(tk.END, f"Bot: {current_memory[clean_command]}\n\n")
 
 		else:
 			time.sleep(0.2)
-			chat_history.insert(tk.END, f"Бот: Я не знаю ответа. Что мне ответить?\n\n")
+			chat_history.insert(tk.END, "Bot: I don't know the answer. What should I reply?\n\n")
 			last_question = clean_command
 
 	else:
 		current_memory[last_question] = clean_command
 		save_data(current_memory)
-		chat_history.insert(tk.END, f"Бот: Запомнил\n\n")
+		chat_history.insert(tk.END, "Bot: Got it, remembered.\n\n")
 		last_question = ""
 
 	chat_history.see(tk.END)
